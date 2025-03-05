@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-100 text-gray-900 font-sans flex justify-center items-center min-h-screen;
+}
+
+button {
+  @apply border border-gray-300 rounded-lg hover:bg-gray-200 transition-all;
+}
