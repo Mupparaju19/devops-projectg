@@ -31,9 +31,8 @@ body {
 }
 
 .scoreboard {
-  @apply flex justify-between items-center w-80 text-lg font-semibold p-2 text-gray-800;
+  @apply flex justify-center space-x-6 text-lg font-semibold text-gray-800 mb-4;
 }
-
 .game-history {
   @apply mt-4 p-2 w-80 bg-gray-100 rounded-lg shadow-md;
 }
@@ -41,3 +40,6 @@ body {
 button {
   @apply px-4 py-2 bg-gray-700 text-white rounded-lg mt-2 hover:bg-gray-900;
 }
+
+
+
