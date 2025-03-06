@@ -1,30 +1,27 @@
-import { FC } from "react";
+import React, { useState } from "react";
 import Square from "./Square";
-import { checkWinner, winningCombinations } from "../utils/gameLogic";
 
-interface BoardProps {
-  squares: ("X" | "O" | null)[];
-  onPlay: (index: number) => void;
-  winner: "X" | "O" | null;
-}
+const Board = () => {
+  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [isXNext, setIsXNext] = useState(true);
 
-const Board: FC<BoardProps> = ({ squares, onPlay, winner }) => {
-  const winningSquares = winner
-    ? winningCombinations.find(
-        ([a, b, c]) => squares[a] === winner && squares[b] === winner && squares[c] === winner
-      ) || []
-    : [];
+  const handleClick = (index: number) => {
+    if (squares[index]) return;
+
+    const newSquares = squares.slice();
+    newSquares[index] = isXNext ? "X" : "O";
+    setSquares(newSquares);
+    setIsXNext(!isXNext);
+  };
 
   return (
-    <div className="grid grid-cols-3 gap-1 w-60 mx-auto">
-      {squares.map((square, index) => (
-        <Square
-          key={index}
-          value={square}
-          onClick={() => onPlay(index)}
-          isWinningSquare={winningSquares.includes(index)}
-        />
-      ))}
+    <div className="flex flex-col items-center">
+      <h1 className="text-2xl font-bold mb-4 text-gray-800">Dic Don Game</h1>
+      <div className="board">
+        {squares.map((value, index) => (
+          <Square key={index} value={value} onClick={() => handleClick(index)} />
+        ))}
+      </div>
     </div>
   );
 };

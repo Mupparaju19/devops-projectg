@@ -3,9 +3,41 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gray-100 text-gray-900 font-sans flex justify-center items-center min-h-screen;
+  @apply flex justify-center items-center min-h-screen bg-gray-200;
+}
+
+.board {
+  @apply grid grid-cols-3 gap-2 p-4 bg-white rounded-2xl shadow-xl w-80 border-4 border-gray-700;
+}
+
+.square {
+  @apply w-20 h-20 flex justify-center items-center text-4xl font-bold rounded-lg border-2 border-gray-500 cursor-pointer transition-all duration-300;
+}
+
+.square.x {
+  @apply text-red-600 shadow-md shadow-red-500;
+}
+
+.square.o {
+  @apply text-blue-600 shadow-md shadow-blue-500;
+}
+
+.square:hover {
+  @apply bg-gray-100;
+}
+
+.glow {
+  box-shadow: 0px 0px 10px rgba(0, 0, 255, 0.7);
+}
+
+.scoreboard {
+  @apply flex justify-between items-center w-80 text-lg font-semibold p-2 text-gray-800;
+}
+
+.game-history {
+  @apply mt-4 p-2 w-80 bg-gray-100 rounded-lg shadow-md;
 }
 
 button {
-  @apply border border-gray-300 rounded-lg hover:bg-gray-200 transition-all;
+  @apply px-4 py-2 bg-gray-700 text-white rounded-lg mt-2 hover:bg-gray-900;
 }

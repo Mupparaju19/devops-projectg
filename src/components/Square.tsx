@@ -1,22 +1,17 @@
-import { FC } from "react";
+import React from "react";
 
 interface SquareProps {
-  value: "X" | "O" | null;
+  value: string | null;
   onClick: () => void;
-  isWinningSquare: boolean;
 }
 
-const Square: FC<SquareProps> = ({ value, onClick, isWinningSquare }) => {
+const Square: React.FC<SquareProps> = ({ value, onClick }) => {
   return (
-    <button
-      className={`w-20 h-20 border text-3xl font-bold flex items-center justify-center ${
-        isWinningSquare ? "bg-green-300" : "bg-white"
-      }`}
-      onClick={onClick}
-    >
+    <button className={`square ${value === "X" ? "x glow" : value === "O" ? "o glow" : ""}`} onClick={onClick}>
       {value}
     </button>
   );
 };
 
 export default Square;
+
