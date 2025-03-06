@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dic-don-game
+  labels:
+    app: dic-don-game
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dic-don-game
+  template:
+    metadata:
+      labels:
+        app: dic-don-game
+    spec:
+      containers:
+        - name: dic-don-game
+          image: ghcr.io/Mupparaju19/dic-don-game:v1  # Update with your GHCR image
+          imagePullPolicy: Always  # Always pull the latest image when redeploying
+          ports:
+            - containerPort: 80
+      restartPolicy: Always

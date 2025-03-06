@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dic-don-game-service
+spec:
+  selector:
+    app: dic-don-game
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP  # Change to LoadBalancer if you want external access
