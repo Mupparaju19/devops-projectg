@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline for Dic Don Game
 
 on:
   push:
@@ -8,80 +8,62 @@ on:
     branches:
       - main
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: mupparaju19/dic-don-game
+
 jobs:
-  # =============================
-  # ✅ Stage 1: Build & Test
-  # =============================
-  build-and-test:
+  build-and-push:
+    name: Build and Push Docker Image to GHCR
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Build the application
+      - name: Build the Application
         run: npm run build
 
-      - name: Run Tests (Optional - Add tests to package.json)
-        run: echo "No tests available." && exit 0
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: dist
-
-  # =============================
-  # ✅ Stage 2: Build Docker Image
-  # =============================
-  build-docker:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Log in to GitHub Container Registry (GHCR)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
       - name: Build Docker Image
-        run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/tic-tac-toe:latest .
-          docker tag ghcr.io/${{ github.repository_owner }}/tic-tac-toe:latest ghcr.io/${{ github.repository_owner }}/tic-tac-toe:${{ github.sha }}
+        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
 
       - name: Push Docker Image to GHCR
-        run: |
-          docker push ghcr.io/${{ github.repository_owner }}/tic-tac-toe:latest
-          docker push ghcr.io/${{ github.repository_owner }}/tic-tac-toe:${{ github.sha }}
+        run: docker push $REGISTRY/$IMAGE_NAME:latest
 
-  # =============================
-  # ✅ Stage 3: Deploy to Kubernetes (Optional)
-  # =============================
   deploy:
-    needs: build-docker
+    name: Deploy to Kubernetes
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    needs: build-and-push
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'latest'
+          version: v1.32.0
 
-      - name: Deploy to Kubernetes
+      - name: Configure Kubeconfig
         run: |
-          kubectl set image deployment/tic-tac-toe tic-tac-toe=ghcr.io/${{ github.repository_owner }}/tic-tac-toe:latest
-          kubectl rollout status deployment/tic-tac-toe
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+
+      - name: Update Kubernetes Deployment
+        run: |
+          kubectl set image deployment/dic-don-game dic-don-game=$REGISTRY/$IMAGE_NAME:latest
+          kubectl rollout restart deployment dic-don-game
+
+      - name: Verify Deployment
+        run: kubectl get pods -o wide
