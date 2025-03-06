@@ -20,24 +20,4 @@ const Board = () => {
     const gameWinner = checkWinner(newBoard);
     if (gameWinner) {
       setWinner(gameWinner);
-      setScores(prev => ({ ...prev, [gameWinner]: prev[gameWinner] + 1 }));
-    } else {
-      setCurrentPlayer((currentPlayer + 1) % players.length);
-    }
-  };
-
-  const resetGame = () => {
-    setBoard(Array(9).fill(null));
-    setWinner(null);
-    setCurrentPlayer(0);
-  };
-
-  return (
-    <div className="flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Dic Don Game</h1>
-      
-      {/* 🔹 FIXED: Improved Scoreboard Layout 🔹 */}
-      <div className="scoreboard flex space-x-6 text-lg font-semibold text-gray-800 mb-4">
-        <div>👤 Krishna: {scores.Krishna}</div>
-        <div>👤 M
-
+      setScores(prev => ({ ...prev, [g
