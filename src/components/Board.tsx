@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Square from "./Square";
 import { checkWinner } from "../utils/gameLogic";
 
-const players = ["Krishna", "Mupparaju", "X", "O"]; // Add custom players
+const players = ["Krishna", "Mupparaju", "X", "O"]; // Defined players
 
 const Board = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -11,7 +11,7 @@ const Board = () => {
   const [winner, setWinner] = useState<string | null>(null);
 
   const handleClick = (index: number) => {
-    if (board[index] || winner) return; // Ignore if already filled
+    if (board[index] || winner) return;
 
     const newBoard = [...board];
     newBoard[index] = players[currentPlayer];
@@ -22,7 +22,7 @@ const Board = () => {
       setWinner(gameWinner);
       setScores(prev => ({ ...prev, [gameWinner]: prev[gameWinner] + 1 }));
     } else {
-      setCurrentPlayer((currentPlayer + 1) % players.length); // Rotate through players
+      setCurrentPlayer((currentPlayer + 1) % players.length);
     }
   };
 
@@ -35,22 +35,9 @@ const Board = () => {
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4 text-gray-800">Dic Don Game</h1>
-      <div className="scoreboard">
-        {players.map(player => (
-          <span key={player}>{player}: {scores[player]}</span>
-        ))}
-      </div>
-      <div className="board">
-        {board.map((value, index) => (
-          <Square key={index} value={value} onClick={() => handleClick(index)} />
-        ))}
-      </div>
-      {winner && <h2 className="text-lg font-bold mt-4">🏆 {winner} Wins!</h2>}
-      <button onClick={resetGame} className="mt-4 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-900">
-        Reset Game
-      </button>
-    </div>
-  );
-};
+      
+      {/* 🔹 FIXED: Improved Scoreboard Layout 🔹 */}
+      <div className="scoreboard flex space-x-6 text-lg font-semibold text-gray-800 mb-4">
+        <div>👤 Krishna: {scores.Krishna}</div>
+        <div>👤 M
 
-export default Board;
