@@ -1,0 +1,85 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # =============================
+  # 1️⃣ Build & Test Stage
+  # =============================
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --frozen-lockfile
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build project
+        run: npm run build
+
+  # =============================
+  # 2️⃣ Docker Build & Push Stage
+  # =============================
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write  # Required for pushing to GHCR
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ github.actor }}/dic-don-game:${{ github.sha }} .
+          docker tag ghcr.io/${{ github.actor }}/dic-don-game:${{ github.sha }} ghcr.io/${{ github.actor }}/dic-don-game:latest
+
+      - name: Push Docker image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.actor }}/dic-don-game:${{ github.sha }}
+          docker push ghcr.io/${{ github.actor }}/dic-don-game:latest
+
+  # =============================
+  # 3️⃣ Deploy to Kubernetes Stage
+  # =============================
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Kubernetes CLI
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "latest"
+
+      - name: Configure Kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/dic-don-game dic-don-game=ghcr.io/${{ github.actor }}/dic-don-game:latest
+          kubectl rollout status deployment/dic-don-game
