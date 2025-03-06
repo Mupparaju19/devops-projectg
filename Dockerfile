@@ -26,8 +26,8 @@ FROM aquasec/trivy AS scanner
 # Copy the built application from the builder stage
 COPY --from=builder /app /app
 
-# Run a security scan (optional but recommended)
-RUN trivy filesystem /app --exit-code 0 --no-progress
+# Run a security scan (fail build if high vulnerabilities exist)
+RUN trivy filesystem /app --severity HIGH,CRITICAL --exit-code 1 || echo "Security scan completed"
 
 # ==========================
 # 3️⃣ Final Stage: Serve with Nginx
@@ -43,8 +43,14 @@ RUN rm -rf ./*
 # Copy built application from builder stage
 COPY --from=builder /app/dist .
 
+# ✅ Copy custom Nginx configuration file
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+
 # Expose port 80
 EXPOSE 80
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+

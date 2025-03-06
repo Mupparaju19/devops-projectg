@@ -23,19 +23,24 @@ const Board = () => {
 
     const gameWinner = checkWinner(newBoard);
 
-    if (gameWinner) {
+    console.log("Board State:", newBoard);
+    console.log("Winner Check:", gameWinner);
+
+    const isBoardFull = !newBoard.includes(null);
+
+    if (gameWinner && !isBoardFull) {
       setWinner(gameWinner);
       setScores(prev => ({
-        ...prev, // ✅ Correctly spreads previous state
+        ...prev,
         [gameWinner === "X" ? "MupparajuX" : "KrishnaO"]: prev[gameWinner === "X" ? "MupparajuX" : "KrishnaO"] + 1
       }));
-    } else if (!newBoard.includes(null)) {
-      // If no winner and all squares filled, it's a draw
+    } else if (isBoardFull) {
       setWinner("Draw");
       setScores(prev => ({
         ...prev,
         Draws: prev.Draws + 1
       }));
+      console.log("Game is a draw! Draw count updated:", scores.Draws + 1);
     } else {
       setCurrentPlayer((currentPlayer + 1) % 2);
     }
@@ -67,13 +72,12 @@ const Board = () => {
 
       {/* Game Board */}
       <div className="grid grid-cols-3 gap-2 bg-white p-5 rounded-lg shadow-lg mt-4">
-       {board.map((value, index) => (
-      <Square key={index} value={value} onClick={() => handleClick(index)} />
-         ))}
+        {board.map((value, index) => (
+          <Square key={index} value={value} onClick={() => handleClick(index)} />
+        ))}
       </div>
 
-
-      {/* 🔹 Scoreboard (Formatted Like Reference) */}
+      {/* Scoreboard */}
       <div className="bg-white p-4 rounded-lg shadow-md mt-4 w-80">
         <h3 className="text-center text-gray-800 font-bold">🏆 Score Board</h3>
         <div className="mt-2">
