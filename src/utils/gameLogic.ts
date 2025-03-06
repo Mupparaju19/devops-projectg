@@ -1,21 +1,16 @@
-export type Player = "X" | "O" | null;
+export const checkWinner = (board: string[]) => {
+  const winningCombinations = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+    [0, 4, 8], [2, 4, 6] // Diagonals
+  ];
 
-export const winningCombinations = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],
-  [0, 4, 8], [2, 4, 6]
-];
-
-export const checkWinner = (squares: Player[]): Player | null => {
   for (let combination of winningCombinations) {
     const [a, b, c] = combination;
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      return board[a]; // Return the winner (X, O, or any player)
     }
   }
-  return null;
-};
 
-export const isDraw = (squares: Player[]): boolean => {
-  return squares.every(square => square !== null);
+  return board.includes(null) ? null : "Draw"; // Return "Draw" if no winner
 };
