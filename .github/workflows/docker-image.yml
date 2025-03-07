@@ -1,4 +1,4 @@
-name: Deploy Tic-Tac-Toe App
+name: Deploy dic-don-game
 
 on:
   push:
@@ -19,11 +19,11 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/tic-tac-toe-app:latest .
+          docker build --no-cache -t ghcr.io/${{ github.repository }}/dic-don-game:latest .
 
       - name: Push Docker Image to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository }}/tic-tac-toe-app:latest
+          docker push ghcr.io/${{ github.repository }}/dic-don-game:latest
 
   deploy:
     name: Deploy to Kubernetes
@@ -33,6 +33,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+
+      - name: Validate Kubeconfig Secret
+        run: |
+          if [ -z "${{ secrets.KUBECONFIG }}" ]; then
+            echo "KUBECONFIG secret is missing!"
+            exit 1
+          fi
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
@@ -49,9 +56,8 @@ jobs:
           kubectl apply -f service.yaml
           kubectl apply -f ingress.yaml
 
-      - name: Restart Deployment
-        run: |
-          kubectl rollout restart deployment tic-tac-toe-app
+      - name: Wait for Deployment to be Ready
+        run: kubectl rollout status deployment/dic-don-game
 
       - name: Verify Deployment
         run: |
