@@ -2,11 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dic-don-game
-  namespace: default  # ✅ Optional: Specify a namespace (change if needed)
-  labels:
-    app: dic-don-game
-  annotations:
-    description: "Deployment for dic-don-game application"  # ✅ Optional: Add metadata
 spec:
   replicas: 2
   selector:
@@ -17,30 +12,25 @@ spec:
       labels:
         app: dic-don-game
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret  # Ensure the secret is referenced
       containers:
         - name: dic-don-game
-          image: ghcr.io/mupparaju19/dic-don-game:v4
-          imagePullPolicy: Always
+          image: ghcr.io/mupparaju19/dic-don:latest
           ports:
-            - containerPort: 80  # Exposes port 80 on the container
-          resources:  # ✅ Add resource limits and requests
-            requests:
-              memory: "128Mi"
-              cpu: "100m"  # 0.1 CPU core
-            limits:
-              memory: "256Mi"
-              cpu: "200m"  # 0.2 CPU core
-          livenessProbe:  # ✅ Add liveness probe to check if the app is alive
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+          livenessProbe:
             httpGet:
-              path: /health  # Adjust path based on your app's health endpoint
-              port: 80
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          readinessProbe:  # ✅ Add readiness probe to check if the app is ready
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
             httpGet:
-              path: /health  # Adjust path based on your app's health endpoint
-              port: 80
+              path: /
+              port: 5000
             initialDelaySeconds: 5
             periodSeconds: 5
-      imagePullSecrets:
-        - name: ghcr-secret  # ✅ Kept this for GHCR authentication

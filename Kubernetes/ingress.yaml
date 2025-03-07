@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: dicdon-game.local  # Replace with your actual domain if using Ingress
+    - host: dic-don-game.local  # Replace with an actual domain if needed
       http:
         paths:
           - path: /
@@ -15,4 +15,4 @@ spec:
               service:
                 name: dic-don-game-service
                 port:
-                  number: 80
+                  number: 80  # This matches the Service's `port`

@@ -8,5 +8,6 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 80
-  type: NodePort  # Change to LoadBalancer if you want external access
+      targetPort: 5000  # Should match your containerPort
+  type: NodePort
+
