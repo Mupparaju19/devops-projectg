@@ -1,0 +1,60 @@
+name: Deploy Tic-Tac-Toe App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        run: echo "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" | docker login ghcr.io -u mupparaju19 --password-stdin
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ghcr.io/mupparaju19/dic-don:latest .
+      
+      - name: Push Docker Image to GHCR
+        run: |
+          docker push ghcr.io/mupparaju19/dic-don:latest
+
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Configure Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
+          kubectl apply -f ingress.yaml
+
+      - name: Restart Deployment
+        run: |
+          kubectl rollout restart deployment dic-don-game
+
+      - name: Verify Deployment
+        run: |
+          kubectl get pods
+          kubectl get svc
+          kubectl get ingress
