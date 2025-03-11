@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dic-don App - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://raw.githubusercontent.com/Mupparaju19/devops-projectg/main/images/treelogin.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Section -->
+    <div class="login-container">
+        <h2>Tree Selling App Login</h2>
+        <form id="loginForm" onsubmit="return validateLogin()">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="footer">
+            <p>Forgot your password? <a href="#">Click here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Simulated User Credentials
+        const validUsername = "admin";
+        const validPassword = "password123";
+
+        // Validate login credentials
+        function validateLogin() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === validUsername && password === validPassword) {
+                alert("Login successful!");
+                return false; // Prevent form submission (for now)
+            } else {
+                alert("Invalid username or password.");
+                return false;
+            }
+        }
+    </script>
+
+</body>
+</html>
